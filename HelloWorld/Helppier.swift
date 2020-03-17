@@ -25,8 +25,7 @@ class HelppierLayer: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func buttonAction(sender: UIButton!) {
-        print("Button tapped")
+    func simulateHttpRequest() {
         // https://stackoverflow.com/questions/31254725/transport-security-has-blocked-a-cleartext-http
         let url = URL(string: "http://localhost:3000/widget/ios")!
         let task = session.dataTask(with: url, completionHandler: { data, response, error in
@@ -42,7 +41,31 @@ class HelppierLayer: UIView {
             
         })
         task.resume()
-
+    }
+    
+    /// Takes the screenshot of the screen and returns the corresponding image
+    ///
+    /// - Parameter shouldSave: Boolean flag asking if the image needs to be saved to user's photo library. Default set to 'true'
+    /// - Returns: (Optional)image captured as a screenshot
+    open func takeScreenshot(_ shouldSave: Bool = true) -> UIImage? {
+        var screenshotImage :UIImage?
+        let layer = UIApplication.shared.keyWindow!.layer
+        let scale = UIScreen.main.scale
+        UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, scale);
+        guard let context = UIGraphicsGetCurrentContext() else {return nil}
+        layer.render(in:context)
+        screenshotImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        if let image = screenshotImage, shouldSave {
+            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+        }
+        return screenshotImage
+    }
+    
+    @objc func buttonAction(sender: UIButton!) {
+        print("Button tapped")
+        
+        let screenshot: UIImage? = takeScreenshot(false);
     }
 
     func setupButton() {
