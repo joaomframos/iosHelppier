@@ -25,10 +25,26 @@ class HelppierLayer: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func simulateHttpRequest() {
+    func sendBase64(_ base64: String?) {
         // https://stackoverflow.com/questions/31254725/transport-security-has-blocked-a-cleartext-http
         let url = URL(string: "http://localhost:3000/widget/ios")!
-        let task = session.dataTask(with: url, completionHandler: { data, response, error in
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let parameters: [String: Any] = [
+            "id": 13,
+            "base64": base64
+        ];
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
+        } catch let error {
+            print(error.localizedDescription)
+        }
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
             // Check the response
             print(response)
             
@@ -72,7 +88,7 @@ class HelppierLayer: UIView {
         
         let screenshot: UIImage? = takeScreenshot(false)
         let base64: String? = toBase64(image: screenshot)
-        print(base64)
+        sendBase64(base64);
     }
 
     func setupButton() {
