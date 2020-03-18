@@ -62,10 +62,17 @@ class HelppierLayer: UIView {
         return screenshotImage
     }
     
+    func toBase64(image: UIImage?) -> String? {
+        guard let imageData = image?.pngData() else { return nil }
+        return imageData.base64EncodedString(options: Data.Base64EncodingOptions.lineLength64Characters)
+    }
+    
     @objc func buttonAction(sender: UIButton!) {
         print("Button tapped")
         
-        let screenshot: UIImage? = takeScreenshot(false);
+        let screenshot: UIImage? = takeScreenshot(false)
+        let base64: String? = toBase64(image: screenshot)
+        print(base64)
     }
 
     func setupButton() {
