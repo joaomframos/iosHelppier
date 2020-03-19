@@ -31,7 +31,7 @@ class HelppierLayer: UIView {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         let parameters: [String: Any] = [
-            "helppierKey": "FAKE_HELPPIER_COMPANY",
+            "helppierKey": "HELPPIER_FAKE_KEY",
             "base64": base64
         ];
         
