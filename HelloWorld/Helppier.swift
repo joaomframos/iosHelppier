@@ -83,12 +83,54 @@ class HelppierLayer: UIView {
         return imageData.base64EncodedString(options: Data.Base64EncodingOptions.lineLength64Characters)
     }
     
-    @objc func buttonAction(sender: UIButton!) {
-        print("Button tapped")
-        
+    func handleScreenshot() {
         let screenshot: UIImage? = takeScreenshot(false)
         let base64: String? = toBase64(image: screenshot)
         sendBase64(base64);
+    }
+    
+    
+    func getOnboarding() {
+        // https://stackoverflow.com/questions/31254725/transport-security-has-blocked-a-cleartext-http
+        let url = URL(string: "http://localhost:3000/widget/ios/onboarding")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        let parameters: [String: Any] = [
+            "helppierKey": "HELPPIER_FAKE_KEY",
+        ];
+        
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted) // pass dictionary to nsdata object and set it as request body
+        } catch let error {
+            print(error.localizedDescription)
+        }
+        
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        
+        let task = session.dataTask(with: request, completionHandler: { data, response, error in
+            // Check the response
+            print(response)
+            
+            // Check if an error occured
+            if error != nil {
+                // HERE you can manage the error
+                print(error)
+                return
+            }
+            
+        })
+        task.resume()
+    }
+    func handleOnboarding() {
+        let onboarding = getOnboarding();
+    }
+    
+    @objc func buttonAction(sender: UIButton!) {
+        print("Button tapped")
+        
+        handleScreenshot();
+        handleOnboarding();
     }
 
     func setupButton() {
