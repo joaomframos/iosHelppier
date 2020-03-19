@@ -27,11 +27,11 @@ class HelppierLayer: UIView {
     
     func sendBase64(_ base64: String?) {
         // https://stackoverflow.com/questions/31254725/transport-security-has-blocked-a-cleartext-http
-        let url = URL(string: "http://localhost:3000/widget/ios")!
+        let url = URL(string: "http://localhost:3000/widget/ios/screenshot")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         let parameters: [String: Any] = [
-            "id": 13,
+            "helppierKey": "FAKE_HELPPIER_COMPANY",
             "base64": base64
         ];
         
