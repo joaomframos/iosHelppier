@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 let session = URLSession.shared
 
@@ -142,10 +143,15 @@ class HelppierLayer: UIView {
     
     func renderOnboarding(images: [String]) {
         print(images);
+        let imageView = UIImageView(frame: CGRect(x: 200, y: 0, width: 200, height: 500));
+        imageView.sd_setImage(with: URL(string: images[0]))
+        DispatchQueue.main.async {
+            self.addSubview(imageView);
+        }
     }
     
     func handleOnboarding() {
-        let onboarding = getOnboarding(renderOnboarding);
+        getOnboarding(renderOnboarding);
     }
     
     @objc func buttonAction(sender: UIButton!) {
