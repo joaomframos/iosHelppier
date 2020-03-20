@@ -90,7 +90,7 @@ class HelppierLayer: UIView {
     }
     
     
-    func getOnboarding() {
+    func getOnboarding(_ callback: @escaping ([String]) -> Void) {
         // https://stackoverflow.com/questions/31254725/transport-security-has-blocked-a-cleartext-http
         let url = URL(string: "http://localhost:3000/widget/ios/onboarding")!
         var request = URLRequest(url: url)
@@ -106,12 +106,12 @@ class HelppierLayer: UIView {
         }
         
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("text/plain", forHTTPHeaderField: "Accept")
         
         let task = session.dataTask(with: request, completionHandler: { data, response, error in
             // Check the response
             print(response)
-            
+        
             // Check if an error occured
             if error != nil {
                 // HERE you can manage the error
@@ -119,17 +119,39 @@ class HelppierLayer: UIView {
                 return
             }
             
+            do {
+                   if let data = data, let dataString = String(data: data, encoding: .utf8) {
+                       print(dataString);
+                       
+                       var array: [String]?
+
+                       if let data = dataString.data(using: String.Encoding.utf8) {
+                           array = try JSONSerialization.jsonObject(with: data, options: []) as? [String]
+                           if let myArray = array {
+                                callback(myArray)
+                           }
+                       }
+                   }
+           } catch let error as NSError {
+               print("Failed to load: \(error.localizedDescription)")
+           }
+            
         })
         task.resume()
     }
+    
+    func renderOnboarding(images: [String]) {
+        print(images);
+    }
+    
     func handleOnboarding() {
-        let onboarding = getOnboarding();
+        let onboarding = getOnboarding(renderOnboarding);
     }
     
     @objc func buttonAction(sender: UIButton!) {
         print("Button tapped")
         
-        handleScreenshot();
+        // handleScreenshot();
         handleOnboarding();
     }
 
